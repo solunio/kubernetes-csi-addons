@@ -80,6 +80,11 @@ func (r *ReclaimSpaceCronJobReconciler) Reconcile(ctx context.Context, req ctrl.
 		return ctrl.Result{}, err
 	}
 
+	if !rsCronJob.DeletionTimestamp.IsZero() {
+		logger.Info("ReclaimSpaceCronJob resource is being deleted, exiting reconcile")
+		return ctrl.Result{}, nil
+	}
+
 	// set history limit defaults, if not specified.
 	if rsCronJob.Spec.FailedJobsHistoryLimit == nil {
 		*rsCronJob.Spec.FailedJobsHistoryLimit = defaultFailedJobsHistoryLimit
