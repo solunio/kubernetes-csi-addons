@@ -124,6 +124,14 @@ func (r *PersistentVolumeClaimReconciler) Reconcile(ctx context.Context, req ctr
 		// requeue the request
 		return ctrl.Result{Requeue: true}, nil
 	}
+
+	// Validate if the PVC is in deletion phase
+	if !pvc.DeletionTimestamp.IsZero() {
+		logger.Info("PVC is in deletion phase", "PVCName", pvc.Name)
+		// requeue the request
+		return ctrl.Result{}, nil
+	}
+
 	// get the driver name from PV to check if it supports space reclamation.
 	pv := &corev1.PersistentVolume{}
 
